@@ -1,0 +1,22 @@
+# Ignore Kraken API key file
+kraken.key
+
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+
+# Ignore logs
+*.log
+
+# Ignore virtual environment
+venv/
+env/
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+*.swp

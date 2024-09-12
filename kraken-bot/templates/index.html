@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kraken Trader | Advanced Crypto Trading Platform</title>
+    <!-- Updated Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.2/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <h1 class="app-title">Kraken Trader</h1>
+            <div class="bot-status">
+                <span class="status-label">Status:</span>
+                <span id="botStatus" class="status-indicator offline">Offline</span>
+            </div>
+            <button id="toggleBot" class="btn">Start Trading</button>
+        </header>
+        
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="#dashboard" class="nav-link active">Dashboard</a></li>
+                <li class="nav-item"><a href="#portfolio" class="nav-link">Portfolio</a></li>
+                <li class="nav-item"><a href="#trades" class="nav-link">Trades</a></li>
+                <li class="nav-item"><a href="#signals" class="nav-link">Signals</a></li>
+                <li class="nav-item"><a href="#logs" class="nav-link">Logs</a></li>
+                <li class="nav-item"><a href="#settings" class="nav-link">Settings</a></li>
+            </ul>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <h2 class="section-title">Dashboard</h2>
+                <div class="dashboard-summary">
+                    <div class="summary-card">
+                        <h3 class="card-title">Total Value</h3>
+                        <p id="totalValue" class="card-value">$0.00</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 class="card-title">24h Change</h3>
+                        <p id="dailyChange" class="card-value">0.00%</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 class="card-title">Top Asset</h3>
+                        <p id="topAsset" class="card-value">N/A</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3 class="card-title">Uptime</h3>
+                        <p id="botUptime" class="card-value">0:00:00</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="portfolioChart"></canvas>
+                </div>
+            </section>
+            
+            <!-- Portfolio Section -->
+            <section id="portfolio" class="content-section">
+                <h2 class="section-title">Portfolio</h2>
+                <div class="asset-grid" id="assetGrid"></div>
+            </section>
+            
+            <!-- Trades Section -->
+            <section id="trades" class="content-section">
+                <h2 class="section-title">Recent Trades</h2>
+                <div class="trade-list" id="tradeList"></div>
+            </section>
+
+            <!-- Signals Section -->
+            <section id="signals" class="content-section">
+                <h2 class="section-title">Trading Signals</h2>
+                <div class="signals-container" id="tradingSignals"></div>
+            </section>
+            
+            <!-- Logs Section -->
+            <section id="logs" class="content-section">
+                <h2 class="section-title">Activity Logs</h2>
+                <div class="log-container">
+                    <pre id="logData" class="log-content"></pre>
+                </div>
+            </section>
+            
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <h2 class="section-title">Trading Settings</h2>
+                <div class="current-settings">
+                    <h3>Current Settings</h3>
+                    <ul id="currentSettingsList"></ul>
+                </div>
+                <form id="settingsForm" class="settings-form">
+                    <!-- Form Groups -->
+                    <!-- Check Interval -->
+                    <div class="form-group">
+                        <label for="checkInterval" class="form-label">Check Interval (s)</label>
+                        <input type="range" id="checkInterval" name="checkInterval" min="60" max="600" step="60" value="300" class="form-range">
+                        <output for="checkInterval" class="range-value">300</output>
+                    </div>
+                    <!-- Max Risk per Trade -->
+                    <div class="form-group">
+                        <label for="maxRiskPerTrade" class="form-label">Max Risk per Trade (%)</label>
+                        <input type="range" id="maxRiskPerTrade" name="maxRiskPerTrade" min="0.1" max="10" step="0.1" value="2" class="form-range">
+                        <output for="maxRiskPerTrade" class="range-value">2%</output>
+                    </div>
+                    <!-- Sentiment Threshold -->
+                    <div class="form-group">
+                        <label for="sentimentThreshold" class="form-label">Sentiment Threshold</label>
+                        <input type="range" id="sentimentThreshold" name="sentimentThreshold" min="0" max="1" step="0.01" value="0.2" class="form-range">
+                        <output for="sentimentThreshold" class="range-value">0.2</output>
+                    </div>
+                    <!-- Rebalance Threshold -->
+                    <div class="form-group">
+                        <label for="rebalanceThreshold" class="form-label">Rebalance Threshold (%)</label>
+                        <input type="range" id="rebalanceThreshold" name="rebalanceThreshold" min="1" max="20" step="1" value="10" class="form-range">
+                        <output for="rebalanceThreshold" class="range-value">10%</output>
+                    </div>
+                    <!-- Volatility Threshold -->
+                    <div class="form-group">
+                        <label for="volatilityThreshold" class="form-label">Volatility Threshold (%)</label>
+                        <input type="range" id="volatilityThreshold" name="volatilityThreshold" min="0.1" max="5" step="0.1" value="2" class="form-range">
+                        <output for="volatilityThreshold" class="range-value">2%</output>
+                    </div>
+                    <!-- Minimum Trade Size -->
+                    <div class="form-group">
+                        <label for="minTradeSize" class="form-label">Minimum Trade Size ($)</label>
+                        <input type="number" id="minTradeSize" name="minTradeSize" min="1" step="1" value="5" class="form-input">
+                    </div>
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Update Settings</button>
+                </form>
+            </section>
+        </main>
+    </div>
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

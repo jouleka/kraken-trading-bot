@@ -1,22 +1,20 @@
 # Kraken Trading Bot
 
-A simple Python-based trading bot for automated cryptocurrency trading on the Kraken exchange. This bot is a work in progress and is intended for educational and experimental purposes.
+A Python-based trading bot for automated cryptocurrency trading on the Kraken exchange, featuring a web-based dashboard for real-time monitoring and control. This bot is intended for educational and experimental purposes.
 
-## What This Bot Does
+## Features
 
-This Kraken Trading Bot offers a basic framework for automated cryptocurrency trading:
+1. **Web Dashboard**: Monitor your portfolio, recent trades, trading signals, and activity logs.
 
-1. **News-Based Trading**: The bot uses a simple sentiment analysis of recent news to make buy or sell decisions.
+2. **Automated Trading Strategy**: Combines technical indicators (SMA, RSI, MACD) with news sentiment analysis to make buy/sell decisions.
 
-2. **Multiple Coin Monitoring**: It can monitor multiple cryptocurrencies available on Kraken, not just those in your current balance.
+3. **Portfolio Management**: Automatically rebalances your portfolio based on predefined thresholds.
 
-3. **Automatic Trading**: Once started, the bot runs continuously, checking for trading opportunities at regular intervals.
-
-4. **Basic Volume-Based Selection**: The bot focuses on the top traded coins on Kraken based on volume.
+4. **Customizable Settings**: Adjust trading parameters through the web interface.
 
 ## Important Note
 
-This bot is in its early stages and should be considered a starting point for more advanced trading strategies. It lacks sophisticated risk management features and may not be suitable for real trading without significant improvements.
+This bot is experimental and not suitable for real trading without significant improvements and thorough testing. Use at your own risk.
 
 ## How to Use
 
@@ -36,7 +34,7 @@ This bot is in its early stages and should be considered a starting point for mo
 
 2. Install required packages:
    ```
-   pip install krakenex requests
+   pip install -r requirements.txt
    ```
 
 3. Set up your Kraken API key:
@@ -44,44 +42,56 @@ This bot is in its early stages and should be considered a starting point for mo
    - On the first line, put your Kraken API key
    - On the second line, put your Kraken private key
 
-4. Update the `gnews_api_key` in the `KrakenBot` class with your actual GNews API key.
+### Set Up GNews API Key
+
+Create a file named `.env` in the project directory with your `GNews API key`:
+   ```
+   GNEWS_API_KEY=your_gnews_api_key
+   ```
+
+### NLTK Data
+
+The bot uses NLTK’s VADER lexicon for sentiment analysis. The necessary data will be automatically downloaded when the bot runs.
 
 ### Running the Bot
 
-To start the bot, run the following command from the project directory:
+1. Start the Flask application:
+   ```
+   python app.py
+   ```
 
-```
-python kraken_bot.py
-```
+2. Access the web dashboard at `http://127.0.0.1:5000`.
 
-The bot will start running, checking for trading opportunities based on news sentiment for various cryptocurrencies.
+### Starting and Stopping the Bot
 
-## Customization
+- **Start Trading**: Click “Start Trading” on the dashboard to start the bot.
+- **Stop Trading**: Click “Stop Trading” to stop the bot.
 
-You can adjust some basic parameters in the `KrakenBot` class:
+### Adjusting Settings
 
-- `check_interval`: Time between trading checks (default: 300 seconds)
-- `base_currency`: Base currency for trading pairs (default: 'EUR')
-- `get_top_coins`: Number of top coins to consider (default: 10)
+Navigate to the “Settings” section in the dashboard to adjust trading parameters such as:
 
-## Disclaimer and Warnings
+- Check Interval
+- Max Risk per Trade
+- Sentiment Threshold
+- Rebalance Threshold
+- Volatility Threshold
+- Minimum Trade Size
 
-- This bot is for educational and experimental purposes only. It is not ready for real trading without significant improvements and thorough testing.
-- The bot's trading strategy is very basic and does not include proper risk management.
-- Always start with small amounts and monitor the bot's actions closely if you decide to use it with real funds.
-- Cryptocurrency trading involves significant risk. This bot is not financial advice. Always do your own research and invest responsibly.
+### Additional Notes
 
-## Future Development
+- **Logging**: Activity logs are saved to `kraken_trader.log`.
+- **API Rate Limits**: Be mindful of Kraken’s API rate limits to avoid being throttled.
+- **Account Balance**: Ensure your Kraken account has sufficient funds for trading.
 
-This bot is a work in progress. Future improvements may include:
+## Disclaimer
 
-- More sophisticated trading strategies
-- Improved risk management features
-- Better error handling and logging
-- Integration with additional news sources and technical indicators
-
-Contributions and suggestions for improvement are welcome!
+- **Educational Purposes Only**: This bot is for educational purposes and should not be used for live trading without proper testing.
+- **No Financial Advice**: This bot does not constitute financial advice.
+- **Risk of Loss**: Cryptocurrency trading involves significant risk. Use caution.
 
 ## License
 
 This project is open-source and available under the Apache License. See the LICENSE file for more details.
+
+Note: Always ensure you comply with local laws and regulations related to cryptocurrency trading and the use of automated trading systems.

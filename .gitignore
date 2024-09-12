@@ -1,6 +1,9 @@
 # Ignore Kraken API key file
 kraken.key
 
+# Ignore environment variable files
+.env
+
 # Ignore Python bytecode files
 __pycache__/
 *.py[cod]

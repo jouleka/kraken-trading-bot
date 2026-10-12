@@ -5,8 +5,7 @@ import os
 from decimal import Decimal
 import pandas as pd
 import numpy as np
-from nltk.sentiment import SentimentIntensityAnalyzer
-import nltk
+from _vendor.nltk_vader import SentimentIntensityAnalyzer
 from datetime import datetime, timedelta
 import logging
 from dotenv import load_dotenv
@@ -35,7 +34,6 @@ class KrakenBot:
         self.rebalance_threshold = Decimal('0.1')  # 10% threshold for rebalancing
         self.min_trade_size = Decimal('5')  # Minimum trade size in base currency
         self.is_trading = False
-        nltk.download('vader_lexicon', quiet=True)
         self.sia = SentimentIntensityAnalyzer()
 
     @sleep_and_retry

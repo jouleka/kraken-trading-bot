@@ -1,0 +1,70 @@
+{
+  "component": "NLTK VADER sentiment analyzer and original NLTK-distributed VADER lexicon",
+  "runtime_dependencies": "Python standard library only; neither nltk nor standalone vaderSentiment is installed",
+  "nltk": {
+    "version": "3.10.3",
+    "official_release_metadata": "https://pypi.org/pypi/nltk/3.10.3/json",
+    "wheel": {
+      "url": "https://files.pythonhosted.org/packages/b6/6d/ebd2af4640b12168fdf0cb74b6118df2f32a2f62ec7e0c06fbfd80706639/nltk-3.10.3-py3-none-any.whl",
+      "bytes": 1798643,
+      "sha256": "ff9598a8e20518ee0d557745890cc4435b9578489e2dcbc69c4f81fa060caf7c"
+    },
+    "original_vader": {
+      "wheel_member": "nltk/sentiment/vader.py",
+      "bytes": 21710,
+      "lines": 643,
+      "sha256": "bee363442f6912012f47af9c7d087935f2fa1008b02a07c80dbca1de9918b759"
+    },
+    "original_util": {
+      "wheel_member": "nltk/util.py",
+      "bytes": 47409,
+      "sha256": "6ec00f1b74527c581714f7a2e01982f649da5bef2c0c455711590d036cba8da2",
+      "pairwise_function_sha256_including_final_newline": "a02ba3fc87ba9420d5613f118330809d1988e60e9f03baaadf80eeaf6cb811a7"
+    },
+    "license": {
+      "wheel_member": "nltk-3.10.3.dist-info/licenses/LICENSE.txt",
+      "file": "LICENSE.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "authors": {
+      "wheel_member": "nltk-3.10.3.dist-info/licenses/AUTHORS.md",
+      "file": "AUTHORS.md",
+      "bytes": 8312,
+      "sha256": "273b74d5bd1029eba591acc85ef4e366ea96ac410a3e33a229a4de869642f3a2"
+    },
+    "modifications": [
+      "Dependency imports use local static loader and the unchanged extracted pairwise helper.",
+      "Constructor calls load_lexicon instead of nltk.data.load.",
+      "A prominent local modification comment precedes the unchanged original header.",
+      "Every other analyzer source byte, including constants, tokenization, negation, punctuation, idioms and scoring, is preserved."
+    ]
+  },
+  "lexicon": {
+    "repository": "https://github.com/nltk/nltk_data",
+    "commit": "550b6625bcef1f2abff2ff770a5a0d272c9c6b2a",
+    "index_url": "https://raw.githubusercontent.com/nltk/nltk_data/550b6625bcef1f2abff2ff770a5a0d272c9c6b2a/index.xml",
+    "index_sha256": "97dce5e72320cd9850b7c20130196006710c18f9c03134c822a37da330198bf6",
+    "url": "https://raw.githubusercontent.com/nltk/nltk_data/550b6625bcef1f2abff2ff770a5a0d272c9c6b2a/packages/sentiment/vader_lexicon.zip",
+    "zip_bytes": 90486,
+    "zip_sha256": "8adba4294eef3964d820bf655e37e61bdc3a341994356af59b74fb3b4a36ce5c",
+    "zip_member": "vader_lexicon/vader_lexicon.txt",
+    "file": "vader_lexicon.txt",
+    "bytes": 434147,
+    "sha256": "0aabac74cd95def2dbedc04ce55e39698d91113ffadb6d86b87dd337c4d2184d",
+    "license": "MIT",
+    "authors": "C.J. Hutto and Eric Gilbert",
+    "modifications": "None; the complete original UTF-8 text bytes, including human-rating columns, are bundled."
+  },
+  "vader_mit_license": {
+    "file": "VADER-MIT-LICENSE.txt",
+    "bytes": 1096,
+    "sha256": "74cfe41cdbf7f6925aeb4c18c148ec8db042540edb6739fd81069aa4e3c8b118",
+    "source": "Official PyPI vaderSentiment 3.3.2 wheel, license text only",
+    "wheel_url": "https://files.pythonhosted.org/packages/76/fc/310e16254683c1ed35eeb97386986d6c00bc29df17ce280aed64d55537e9/vaderSentiment-3.3.2-py2.py3-none-any.whl",
+    "wheel_sha256": "3bf1d243b98b1afad575b9f22bc2cb1e212b94ff89ca74f8a23a588d024ea311",
+    "wheel_member": "vaderSentiment-3.3.2.dist-info/LICENSE.txt",
+    "scope": "The standalone package analyzer and its changed lexicon are not used."
+  },
+  "compatibility_scope": "Exact NLTK 3.10.3 analyzer plus the pinned original NLTK lexicon. The previously deployed NLTK version and cached lexicon were not inspected; live trading behavior is not measured."
+}

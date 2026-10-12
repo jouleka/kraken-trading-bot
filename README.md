@@ -49,9 +49,9 @@ Create a file named `.env` in the project directory with your `GNews API key`:
    GNEWS_API_KEY=
    ```
 
-### NLTK Data
+### Offline Sentiment Analysis
 
-The bot uses NLTK’s VADER lexicon for sentiment analysis. The necessary data will be automatically downloaded when the bot runs.
+The bot bundles the NLTK 3.10.3 VADER analyzer and the unchanged original NLTK VADER lexicon. Sentiment initialization uses the local bundled data, without installing full NLTK or downloading a corpus at runtime. The original scoring rules and lexicon bytes are preserved. Source and data pins are in [PROVENANCE.json](kraken-bot/_vendor/nltk_vader/PROVENANCE.json), with Apache/MIT licenses and attribution in the same directory.
 
 ### Running the Bot
 
@@ -61,6 +61,8 @@ The bot uses NLTK’s VADER lexicon for sentiment analysis. The necessary data w
    ```
 
 2. Access the web dashboard at `http://127.0.0.1:5000`.
+
+The Flask application keeps its default loopback listener and accepts only `localhost`, `127.0.0.1`, and `::1` Host names. State-changing requests reject cross-origin, opaque or malformed Origin values and cross-site Fetch Metadata before starting, stopping or changing the bot. The dashboard's same-origin requests and local CLI requests without an Origin header continue to work. Responses deny framing with `Content-Security-Policy: frame-ancestors 'none'` and `X-Frame-Options: DENY`. These local request checks do not authenticate local programs; remote hosting needs a separate access-control design.
 
 ### Starting and Stopping the Bot
 

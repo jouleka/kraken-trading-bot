@@ -3,7 +3,6 @@ krakenex
 requests
 pandas
 numpy
-nltk
 libsass
 python-dotenv
 ratelimit

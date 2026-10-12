@@ -1,0 +1,30 @@
+NLTK VADER extraction
+
+Copyright (C) 2001-2026 NLTK Project.
+VADER original author: C.J. Hutto.
+NLTK modifications: Ewan Klein, Pierpaolo Pantone, George Berry, Malavika Suresh.
+The original analyzer header, author list, citation and comments are retained.
+NLTK source and the unchanged pairwise function are licensed under Apache 2.0
+(see LICENSE.txt and AUTHORS.md). The official wheel has no NOTICE file.
+
+The bundled original VADER Sentiment Lexicon is by C.J. Hutto and Eric Gilbert.
+The immutable nltk_data index identifies its license as MIT. The upstream MIT
+copyright and permission text is preserved in VADER-MIT-LICENSE.txt.
+
+Local changes to NLTK 3.10.3 are limited to the dependency imports and constructor
+loader call. The adjacent pairwise helper is extracted unchanged from nltk.util.
+The loader reads and verifies the bundled static UTF-8 lexicon, without NLTK,
+corpus downloads, external resources or user-controlled resource paths. Scoring
+source, constants, tokenization, negation, punctuation, idioms and the lexicon
+bytes are otherwise unchanged. PROVENANCE.json pins the complete original
+release, original module/helper, lexicon asset and license bytes.
+
+Research citation retained from upstream:
+Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for
+Sentiment Analysis of Social Media Text. Eighth International Conference on
+Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.
+
+Compatibility is scoped to this original NLTK analyzer and pinned lexicon. The
+previously deployed NLTK version and cached lexicon have not been inspected.
+The original NLTK distribution is used only in separate offline validation
+instrumentation; it is excluded from application imports and runtime dependencies.

@@ -1,11 +1,11 @@
 """Offline fixtures: tests cannot load credentials, download data or make requests."""
 
 import importlib.util
+import socket
 import sys
 from pathlib import Path
 
 import krakenex
-import nltk
 import pytest
 import requests
 
@@ -22,7 +22,8 @@ def deny_external_services(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(requests.sessions.Session, "request", forbidden)
     monkeypatch.setattr(krakenex.API, "load_key", forbidden)
-    monkeypatch.setattr(nltk, "download", forbidden)
+    monkeypatch.setattr(socket, "create_connection", forbidden)
+    monkeypatch.setattr(socket.socket, "connect", forbidden)
     monkeypatch.delenv("GNEWS_API_KEY", raising=False)
 
 

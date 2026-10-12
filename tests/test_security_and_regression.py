@@ -147,7 +147,7 @@ def test_order_error_does_not_log_raw_exchange_response(caplog):
 @pytest.mark.parametrize("response", [{"errors": [ERROR_MARKER]}, RuntimeError(ERROR_MARKER)])
 def test_news_errors_do_not_log_response_or_request_credentials(monkeypatch, caplog, response):
     bot = KrakenBot.__new__(KrakenBot)
-    bot.gnews_api_key = "synthetic-test-token"
+    bot.gnews_api_key = ERROR_MARKER
     get = Mock(side_effect=response) if isinstance(response, Exception) else Mock(return_value=SimpleNamespace(json=lambda: response))
     monkeypatch.setattr("kraken_bot.requests.get", get)
     caplog.set_level(logging.INFO)

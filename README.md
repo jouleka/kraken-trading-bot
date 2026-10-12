@@ -46,7 +46,7 @@ This bot is experimental and not suitable for real trading without significant i
 
 Create a file named `.env` in the project directory with your `GNews API key`:
    ```
-   GNEWS_API_KEY=your_gnews_api_key
+   GNEWS_API_KEY=
    ```
 
 ### NLTK Data

@@ -35,4 +35,3 @@ def dashboard(monkeypatch):
     yield module
     module.logger.removeHandler(module.handler)
     module.handler.close()
-

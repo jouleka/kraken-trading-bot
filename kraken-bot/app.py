@@ -42,8 +42,8 @@ def run_bot():
             portfolio_history = [ph for ph in portfolio_history if datetime.fromisoformat(ph['timestamp']) > cutoff_time]
             
             time.sleep(bot.check_interval)
-        except Exception as e:
-            logger.error(f"Error in trading strategy: {str(e)}")
+        except Exception:
+            logger.error("Error in trading strategy")
             time.sleep(60)
 
 @app.route('/')
@@ -68,8 +68,8 @@ def start_bot():
         else:
             logger.info("Bot is already running")
             return jsonify({"status": "warning", "message": "Bot is already running"})
-    except Exception as e:
-        error_message = f"Error starting bot: {str(e)}"
+    except Exception:
+        error_message = "Error starting bot"
         logger.error(error_message)
         return jsonify({"status": "error", "message": error_message}), 500
 
@@ -87,8 +87,8 @@ def stop_bot():
         else:
             logger.info("Bot is not running")
             return jsonify({"status": "warning", "message": "Bot is not running"})
-    except Exception as e:
-        error_message = f"Error stopping bot: {str(e)}"
+    except Exception:
+        error_message = "Error stopping bot"
         logger.error(error_message)
         return jsonify({"status": "error", "message": error_message}), 500
 
@@ -98,8 +98,8 @@ def get_logs():
         with open('kraken_trader.log', 'r') as log_file:
             logs = log_file.readlines()[-100:]  # Get last 100 lines
         return jsonify({"logs": logs})
-    except Exception as e:
-        error_message = f"Error reading logs: {str(e)}"
+    except Exception:
+        error_message = "Error reading logs"
         logger.error(error_message)
         return jsonify({"error": error_message}), 500
 
@@ -119,8 +119,8 @@ def get_portfolio():
         else:
             logger.info("Bot is not running, cannot retrieve portfolio")
             return jsonify({"error": "Bot is not running"}), 400
-    except Exception as e:
-        error_message = f"Error getting portfolio: {str(e)}"
+    except Exception:
+        error_message = "Error getting portfolio"
         logger.error(error_message)
         return jsonify({"error": error_message}), 500
 
@@ -130,8 +130,8 @@ def get_trades():
         try:
             trades = bot.get_recent_trades()
             return jsonify({"trades": trades})
-        except Exception as e:
-            error_message = f"Error getting trades: {str(e)}"
+        except Exception:
+            error_message = "Error getting trades"
             logger.error(error_message)
             return jsonify({"error": error_message}), 500
     return jsonify({"error": "Bot is not running"}), 400
@@ -149,8 +149,8 @@ def update_settings():
             bot.min_trade_size = float(data['minTradeSize'])
             logger.info("Settings updated successfully")
             return jsonify({"status": "success", "message": "Settings updated successfully"})
-        except Exception as e:
-            error_message = f"Error updating settings: {str(e)}"
+        except Exception:
+            error_message = "Error updating settings"
             logger.error(error_message)
             return jsonify({"status": "error", "message": error_message}), 500
     return jsonify({"status": "error", "message": "Bot is not running"}), 400
@@ -174,8 +174,8 @@ def get_trading_signals():
         try:
             signals = bot.get_current_signals()
             return jsonify(signals)
-        except Exception as e:
-            error_message = f"Error getting trading signals: {str(e)}"
+        except Exception:
+            error_message = "Error getting trading signals"
             logger.error(error_message)
             return jsonify({"status": "error", "message": error_message}), 500
     return jsonify({"status": "error", "message": "Bot is not running"}), 400
@@ -207,4 +207,4 @@ def compile_scss():
 
 if __name__ == '__main__':
     compile_scss()
-    app.run(debug=True)
+    app.run(debug=False)

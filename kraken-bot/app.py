@@ -5,10 +5,60 @@ import time
 import sass
 import os
 from datetime import datetime, timedelta
+from ipaddress import ip_address
 import logging
 from logging.handlers import RotatingFileHandler
+from urllib.parse import urlsplit
 
 app = Flask(__name__)
+
+
+def _local_origin(value):
+    """Parse a local HTTP origin without accepting URL credentials or paths."""
+    if not isinstance(value, str) or not value or any(
+            character.isspace() or ord(character) < 32 or ord(character) == 127 for character in value):
+        return None
+    if any(character in value for character in "\\?#"):
+        return None
+    try:
+        parsed = urlsplit(value)
+        if (parsed.scheme not in {'http', 'https'} or not parsed.netloc
+                or parsed.path or parsed.username is not None or parsed.password is not None
+                or parsed.netloc.endswith(':')):
+            return None
+        hostname = parsed.hostname
+        if hostname != 'localhost':
+            hostname = str(ip_address(hostname))
+            if hostname not in {'127.0.0.1', '::1'}:
+                return None
+        port = parsed.port
+        if port is not None and port < 1:
+            return None
+        return parsed.scheme, hostname, port if port is not None else (80 if parsed.scheme == 'http' else 443)
+    except (TypeError, ValueError):
+        return None
+
+
+@app.before_request
+def guard_local_controls():
+    """Reject rebinding hosts and cross-origin controls before any bot work."""
+    local = _local_origin(request.scheme + '://' + request.headers.get('Host', ''))
+    rejected = local is None
+    if request.method not in {'GET', 'HEAD', 'OPTIONS'}:
+        origin = request.headers.get('Origin')
+        site = request.headers.get('Sec-Fetch-Site')
+        rejected = rejected or (origin is not None and _local_origin(origin) != local)
+        rejected = rejected or (site is not None and site not in {'same-origin', 'none'})
+    if rejected:
+        return jsonify({'status': 'error', 'message': 'Local control request rejected'}), 403
+
+
+@app.after_request
+def deny_dashboard_framing(response):
+    response.headers['Content-Security-Policy'] = "frame-ancestors 'none'"
+    response.headers['X-Frame-Options'] = 'DENY'
+    return response
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -42,8 +92,8 @@ def run_bot():
             portfolio_history = [ph for ph in portfolio_history if datetime.fromisoformat(ph['timestamp']) > cutoff_time]
             
             time.sleep(bot.check_interval)
-        except Exception as e:
-            logger.error(f"Error in trading strategy: {str(e)}")
+        except Exception:
+            logger.error("Error in trading strategy")
             time.sleep(60)
 
 @app.route('/')
@@ -68,8 +118,8 @@ def start_bot():
         else:
             logger.info("Bot is already running")
             return jsonify({"status": "warning", "message": "Bot is already running"})
-    except Exception as e:
-        error_message = f"Error starting bot: {str(e)}"
+    except Exception:
+        error_message = "Error starting bot"
         logger.error(error_message)
         return jsonify({"status": "error", "message": error_message}), 500
 
@@ -87,8 +137,8 @@ def stop_bot():
         else:
             logger.info("Bot is not running")
             return jsonify({"status": "warning", "message": "Bot is not running"})
-    except Exception as e:
-        error_message = f"Error stopping bot: {str(e)}"
+    except Exception:
+        error_message = "Error stopping bot"
         logger.error(error_message)
         return jsonify({"status": "error", "message": error_message}), 500
 
@@ -98,8 +148,8 @@ def get_logs():
         with open('kraken_trader.log', 'r') as log_file:
             logs = log_file.readlines()[-100:]  # Get last 100 lines
         return jsonify({"logs": logs})
-    except Exception as e:
-        error_message = f"Error reading logs: {str(e)}"
+    except Exception:
+        error_message = "Error reading logs"
         logger.error(error_message)
         return jsonify({"error": error_message}), 500
 
@@ -119,8 +169,8 @@ def get_portfolio():
         else:
             logger.info("Bot is not running, cannot retrieve portfolio")
             return jsonify({"error": "Bot is not running"}), 400
-    except Exception as e:
-        error_message = f"Error getting portfolio: {str(e)}"
+    except Exception:
+        error_message = "Error getting portfolio"
         logger.error(error_message)
         return jsonify({"error": error_message}), 500
 
@@ -130,8 +180,8 @@ def get_trades():
         try:
             trades = bot.get_recent_trades()
             return jsonify({"trades": trades})
-        except Exception as e:
-            error_message = f"Error getting trades: {str(e)}"
+        except Exception:
+            error_message = "Error getting trades"
             logger.error(error_message)
             return jsonify({"error": error_message}), 500
     return jsonify({"error": "Bot is not running"}), 400
@@ -149,8 +199,8 @@ def update_settings():
             bot.min_trade_size = float(data['minTradeSize'])
             logger.info("Settings updated successfully")
             return jsonify({"status": "success", "message": "Settings updated successfully"})
-        except Exception as e:
-            error_message = f"Error updating settings: {str(e)}"
+        except Exception:
+            error_message = "Error updating settings"
             logger.error(error_message)
             return jsonify({"status": "error", "message": error_message}), 500
     return jsonify({"status": "error", "message": "Bot is not running"}), 400
@@ -174,8 +224,8 @@ def get_trading_signals():
         try:
             signals = bot.get_current_signals()
             return jsonify(signals)
-        except Exception as e:
-            error_message = f"Error getting trading signals: {str(e)}"
+        except Exception:
+            error_message = "Error getting trading signals"
             logger.error(error_message)
             return jsonify({"status": "error", "message": error_message}), 500
     return jsonify({"status": "error", "message": "Bot is not running"}), 400
@@ -207,4 +257,4 @@ def compile_scss():
 
 if __name__ == '__main__':
     compile_scss()
-    app.run(debug=True)
+    app.run(debug=False)

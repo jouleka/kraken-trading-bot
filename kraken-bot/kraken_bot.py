@@ -5,8 +5,7 @@ import os
 from decimal import Decimal
 import pandas as pd
 import numpy as np
-from nltk.sentiment import SentimentIntensityAnalyzer
-import nltk
+from _vendor.nltk_vader import SentimentIntensityAnalyzer
 from datetime import datetime, timedelta
 import logging
 from dotenv import load_dotenv
@@ -35,7 +34,6 @@ class KrakenBot:
         self.rebalance_threshold = Decimal('0.1')  # 10% threshold for rebalancing
         self.min_trade_size = Decimal('5')  # Minimum trade size in base currency
         self.is_trading = False
-        nltk.download('vader_lexicon', quiet=True)
         self.sia = SentimentIntensityAnalyzer()
 
     @sleep_and_retry
@@ -66,15 +64,15 @@ class KrakenBot:
                     except KeyError:
                         logger.warning(f"Skipping pair {pair} due to missing 'ordermin' information")
             logger.info(f"Valid asset pairs: {list(self.asset_pairs.keys())}")
-        except Exception as e:
-            logger.error(f"Error fetching asset pairs: {str(e)}")
+        except Exception:
+            logger.error("Error fetching asset pairs")
 
     def get_balance(self):
         """Fetch account balance from Kraken."""
         try:
             return {k: Decimal(v) for k, v in self._make_kraken_api_call('private', 'Balance')['result'].items()}
-        except Exception as e:
-            logger.error(f"Error fetching balance: {str(e)}")
+        except Exception:
+            logger.error("Error fetching balance")
             return {}
 
     def get_ticker_info(self, pair):
@@ -89,8 +87,8 @@ class KrakenBot:
         except KeyError:
             logger.error(f"Error fetching ticker info for {pair}: KeyError")
             return None
-        except Exception as e:
-            logger.error(f"Error fetching ticker info for {pair}: {str(e)}")
+        except Exception:
+            logger.error("Error fetching ticker information")
             return None
 
     def get_portfolio_value(self):
@@ -120,7 +118,7 @@ class KrakenBot:
             news_data = response.json()
             
             if 'articles' not in news_data:
-                logger.error(f"Error fetching news for {asset}: {news_data.get('errors', ['Unknown error'])}")
+                logger.error("News service returned an error")
                 return Decimal('0')
             
             sentiments = []
@@ -134,8 +132,8 @@ class KrakenBot:
             avg_sentiment = Decimal(sum(sentiments) / len(sentiments)) if sentiments else Decimal('0')
             logger.info(f"Current sentiment for {asset}: {avg_sentiment:.4f}")
             return avg_sentiment
-        except Exception as e:
-            logger.error(f"Error fetching news sentiment for {asset}: {str(e)}")
+        except Exception:
+            logger.error("Error fetching news sentiment")
             return Decimal('0')
         
     def get_recent_trades(self, limit=10):
@@ -153,8 +151,8 @@ class KrakenBot:
                     'cost': trade_info['cost']
                 })
             return recent_trades
-        except Exception as e:
-            logger.error(f"Error fetching recent trades: {str(e)}")
+        except Exception:
+            logger.error("Error fetching recent trades")
             return []
 
     def place_order(self, pair, type, volume):
@@ -174,15 +172,15 @@ class KrakenBot:
             }
             
             response = self._make_kraken_api_call('private', 'AddOrder', order_params)
-            logger.info(f"Order response: {response}")
+            logger.info("Order response received")
             if 'error' in response and response['error']:
-                logger.error(f"Error placing order: {response['error']}")
+                logger.error("Kraken rejected the order")
             elif 'result' in response and 'txid' in response['result']:
-                logger.info(f"Order placed successfully. Transaction ID: {response['result']['txid']}")
+                logger.info("Order placed successfully")
             else:
                 logger.warning("Unexpected response format")
-        except Exception as e:
-            logger.error(f"Exception occurred while placing order: {str(e)}")
+        except Exception:
+            logger.error("Error placing order")
 
     def rebalance_portfolio(self):
         """Rebalance the portfolio based on predefined thresholds."""
@@ -227,8 +225,8 @@ class KrakenBot:
             df.set_index('time', inplace=True)
             df = df.astype(float)
             return df
-        except Exception as e:
-            logger.error(f"Error fetching historical data for {pair}: {str(e)}")
+        except Exception:
+            logger.error("Error fetching historical data")
             return None
 
     def calculate_indicators(self, df):
@@ -290,8 +288,8 @@ class KrakenBot:
                     'sentiment': float(sentiment)
                 }
             
-            except Exception as e:
-                logger.error(f"Error getting signals for {asset}: {str(e)}")
+            except Exception:
+                logger.error("Error getting trading signals")
         
         return signals
 
@@ -352,8 +350,8 @@ class KrakenBot:
                 else:
                     logger.debug(f"No trade action for {asset}.")
             
-            except Exception as e:
-                logger.error(f"Error processing {asset}: {str(e)}")
+            except Exception:
+                logger.error("Error processing trading signals")
             
             time.sleep(1)
 
@@ -376,8 +374,8 @@ class KrakenBot:
                     self.rebalance_portfolio()
                     self.trading_strategy()
                 time.sleep(self.check_interval)
-            except Exception as e:
-                logger.error(f"Error in trading strategy: {str(e)}")
+            except Exception:
+                logger.error("Error in trading strategy")
                 time.sleep(60)
 
 if __name__ == "__main__":
